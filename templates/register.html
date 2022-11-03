@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+<form action="/register" method="post">
+    <div class="mb-5">
+        <h1>Register</h1>
+    </div>
+    <div class="mb-3 row justify-content-md-center">
+        <label for="username" class="col-sm-1 col-form-label">Username</label>
+        <div class="col-sm-auto">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" type="text">
+        </div>
+    </div>
+    <div class="mb-3 row justify-content-md-center">
+        <label for="password" class="col-sm-1 col-form-label">Password</label>
+        <div class="col-sm-auto">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="password" name="password" type="password">
+        </div>
+    </div>
+    <div class="mb-5 row justify-content-md-center">
+        <label for="password" class="col-sm-1 col-form-label">Confirm Password</label>
+        <div class="col-sm-auto">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="confirm_password" name="confirm_password" type="password">
+        </div>
+    </div>
+    <div class="mb-3 d-grid gap-2 col-2 mx-auto">
+        <button type="submit" class="btn btn-primary">Register</button>
+    </div>
+    <div class="mb-3">
+        <div class="col-sm-auto">Already have an account?
+            <a class="link-dark" href="/login">login</a>
+        </div>
+    </div>
+</form>
+{% endblock %}
