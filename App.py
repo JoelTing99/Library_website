@@ -17,7 +17,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-db = sqlite3.connect("FinalProject.db")
+database_name = "FinalProject.db"
 
 @app.route("/")
 def index():
@@ -29,8 +29,46 @@ def account():
 
 @app.route("/account/login", methods=["GET", "POST"])
 def login():
+    # Clear any user_id
+    session.clear()
+ 
     if request.method == "POST":
-        return render_template("/")
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        print(username)
+        print(password)
+        # Ensure username and password is not empty
+        if not username:
+            flash("must provide username")
+            print("must provide username")
+            return render_template("login.html")
+
+        elif not password:
+            flash("must provide password")
+            print("must provide password")
+            return render_template("login.html")
+
+        with sqlite3.connect(database_name) as conn:
+            db = conn.cursor()
+            # Get user by username from database
+            users_db = db.execute("SELECT * FROM users WHERE username = ?", (username,))
+            user = users_db.fetchone()
+
+        # Ensure the username and the password are correct 
+        if not check_password_hash(user[2], password):
+            flash("invalid username and/or password")
+            print("invalid username and/or password")
+            return render_template("login.html")
+
+        # Remember user has logged in
+        session["user_id"] = user[0]
+
+        conn.close()
+
+        flash("Logged in")
+        return redirect("/")
 
     return render_template("login.html")
 
@@ -47,4 +85,42 @@ def logout():
 
 @app.route("/account/register", methods=["GET", "POST"])
 def register():
-    return render_template("/register.html")
+
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        # Ensure username was submitted
+        if not username:
+            flash("must provide username")
+            return render_template("register.html")
+
+        # Ensure password was submitted
+        elif not password:
+            flash("must provide password")
+            return render_template("register.html")
+
+        # Ensure password was same
+        elif password != confirm_password:
+            flash("two passwords are not the same")
+            return render_template("register.html")
+
+        hash_password = generate_password_hash(password)
+
+        try:
+            with sqlite3.connect(database_name) as conn:
+                db = conn.cursor()
+                user_db = db.execute("INSERT INTO users (username, hash) VALUES(?, ?)",(username, hash_password,))
+                conn.commit()
+        except:
+            flash("username already exists")
+            return render_template("register.html")
+
+        session["user_id"] = user_db.fetchone()[0]
+
+        flash("Registered")
+        return redirect("/")
+
+    return render_template("register.html")

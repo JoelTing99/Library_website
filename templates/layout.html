@@ -22,11 +22,10 @@
                 <div class="collapse navbar-collapse" id="navbar">
                     {% if session["user_id"] %}
                         <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="#">Quote</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Buy</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Sell</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">My Books</a></li>
                             <li class="nav-item"><a class="nav-link" href="#">History</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Add cash</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Remove Books</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Add Books</a></li>
                         </ul>
                         <ul class="navbar-nav ms-auto mt-2">
                             <li class="nav-item"><a class="nav-link" href="#">Log Out</a></li>
@@ -43,9 +42,9 @@
 
         {% if get_flashed_messages() %}
             <header>
-                <div class="alert alert-primary mb-0 text-center" role="alert">
-                    {{ get_flashed_messages() | join(" ") }}
-                </div>
+                {% for message in get_flashed_messages() %}
+                    <div class="alert alert-primary mb-0 text-center">{{ message }}</div>
+                {% endfor %}
             </header>
         {% endif %}
 
