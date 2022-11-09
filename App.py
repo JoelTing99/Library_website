@@ -24,7 +24,8 @@ database_name = "FinalProject.db"
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
     title TEXT NOT NULL,
     publish_date DATE DEFAULT CURRENT_DATE,
-    publisher TEXT,
+    publisher TEXT NOT NULL,
+    creater_id INTEGER NOT NULL,
     pages INTEGER)"""
 
 @app.route("/")
@@ -160,10 +161,10 @@ def Add_book():
         with sqlite3.connect(database_name) as conn:
             db = conn.cursor()
 
-            db.execute("INSERT INTO books (title, publisher, pages) VALUES(?, ?, ?)", (title, publisher, pages,))
+            db.execute("INSERT INTO books (title, publisher, pages, creater_id) VALUES(?, ?, ?, ?)", (title, publisher, pages, session["user_id"]))
             conn.commit()
 
-            if len(db.execute("SELECT * FROM books WHERE title = ? AND publisher = ?", (title, publisher, )).fetchall()) > 1:
+            if len(db.execute("SELECT * FROM books WHERE title = ? AND publisher = ?", (title, publisher,)).fetchall()) > 1:
                 flash("this book exists") 
                 return render_template("add_book.html")
 
@@ -171,3 +172,8 @@ def Add_book():
         return redirect("/")
 
     return render_template("add_book.html") 
+
+@app.route("/remove_book", methods=["GET", "POST"])
+@login_required
+def Remove_book():
+    return render_template("remove_book.html")

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Remove Books
+{% endblock %}
+
+{% block main %}
+<form action="/remove_book" method="post">
+    <div class="mb-5">
+        <h1>Remove Books</h1>
+    </div>
+    <div class="mb-3 row justify-content-md-center">
+        {% for book in books %}
+
+        {% endfor %}
+        <lu class="list-group w-50">
+            <li class="list-group-item list-group-item-dark d-flex justify-content-between">
+                <h3 class="mt-1">test</h3>
+                <button type="submit" class="btn btn-primary">Remove</button>
+            </li>
+            <li class="list-group-item list-group-item-dark d-flex justify-content-between">
+                <h3 class="mt-1">test2</h3>
+                <button type="submit" class="btn btn-primary">Remove</button>
+            </li>
+        </lu>
+    </div>
+</form>
+{% endblock %}
