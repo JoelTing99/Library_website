@@ -19,10 +19,18 @@ Session(app)
 
 database_name = "FinalProject.db"
 
+
+"""CREATE TABLE books (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+    title TEXT NOT NULL,
+    publish_date DATE DEFAULT CURRENT_DATE,
+    publisher TEXT,
+    pages INTEGER)"""
+
 @app.route("/")
 @login_required
 def index():
-    return render_template("layout.html")
+    return render_template("index.html")
 
 @app.route("/account")
 @login_required
@@ -130,3 +138,36 @@ def register():
         return redirect("/")
 
     return render_template("register.html")
+
+
+@app.route("/add_book", methods=["GET", "POST"])
+@login_required
+def Add_book():
+    if request.method == "POST":
+
+        title = request.form.get("title")
+        publisher = request.form.get("publisher")
+        pages = request.form.get("pages")
+
+        if not title:
+            flash("must provide title")
+            return render_template("/add_book")
+
+        if not publisher:
+            flash("must provide publisher")
+            return render_template("/add_book")
+
+        with sqlite3.connect(database_name) as conn:
+            db = conn.cursor()
+
+            db.execute("INSERT INTO books (title, publisher, pages) VALUES(?, ?, ?)", (title, publisher, pages,))
+            conn.commit()
+
+            if len(db.execute("SELECT * FROM books WHERE title = ? AND publisher = ?", (title, publisher, )).fetchall()) > 1:
+                flash("this book exists") 
+                return render_template("add_book.html")
+
+        flash("Book Added")
+        return redirect("/")
+
+    return render_template("add_book.html") 
