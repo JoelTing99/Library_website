@@ -20,10 +20,12 @@ Session(app)
 database_name = "FinalProject.db"
 
 @app.route("/")
+@login_required
 def index():
     return render_template("layout.html")
 
 @app.route("/account")
+@login_required
 def account():
     return render_template("layout.html")
 
@@ -59,7 +61,7 @@ def login():
         # Ensure the username and the password are correct 
         if not check_password_hash(user[2], password):
             flash("invalid username and/or password")
-            print("invalid username and/or password")
+            print(user[2])
             return render_template("login.html")
 
         # Remember user has logged in
@@ -109,16 +111,20 @@ def register():
 
         hash_password = generate_password_hash(password)
 
-        try:
-            with sqlite3.connect(database_name) as conn:
-                db = conn.cursor()
-                user_db = db.execute("INSERT INTO users (username, hash) VALUES(?, ?)",(username, hash_password,))
-                conn.commit()
-        except:
-            flash("username already exists")
-            return render_template("register.html")
+        with sqlite3.connect(database_name) as conn:
+            db = conn.cursor()
 
-        session["user_id"] = user_db.fetchone()[0]
+            if len(db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchall()) != 0:
+                flash("username already exists")
+                return render_template("register.html")
+
+            db.execute("INSERT INTO users (username, hash) VALUES(?, ?)",(username, hash_password,))
+            conn.commit()
+            
+            users_db = db.execute("SELECT * FROM users WHERE username = ?", (username,))
+            user = users_db.fetchone()
+
+        session["user_id"] = user[0]
 
         flash("Registered")
         return redirect("/")
