@@ -13,7 +13,9 @@
         <lu class="list-group w-50">
             {% for book in books %}
                 <li class="list-group-item list-group-item-dark d-flex justify-content-between">
-                    <h3 class="mt-1">{{ book[0] }}</h3>
+                    <h3 class="mt-1">{{ book[1] }}</h3>
+                    <input name="id" type="hidden" value="{{ book[0] }}">
+                    <input name="title" type="hidden" value="{{ book[1] }}">
                     <button type="submit" class="btn btn-primary">Remove</button>
                 </li>
             {% endfor %}

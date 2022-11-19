@@ -10,10 +10,16 @@
 </div>
 <div class="mb-3 row justify-content-md-center">
     <lu class="list-group w-50">
-        {% for book in books %}
+        <li class="list-group-item list-group-item-light d-flex justify-content-between">
+            <h2 class="mt-1">Title</h2>
+            <h2 class="mt-1">Time</h2>
+            <h2 class="mt-1">Action</h2>
+        </li>
+        {% for history in historys %}
             <li class="list-group-item list-group-item-dark d-flex justify-content-between">
-                <h3 class="mt-1">{{ book[0] }}</h3>
-                <button type="submit" class="btn btn-primary">Remove</button>
+                <h2 class="mt-1">{{ history[1] }}</h2>
+                <h4 class="mt-2">{{ history[2] }}</h4>
+                <h4 class="mt-2">{{ history[5] }}</h4>
             </li>
         {% endfor %}
     </lu>

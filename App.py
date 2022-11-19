@@ -26,12 +26,12 @@ database_name = "FinalProject.db"
     publish_date DATE DEFAULT CURRENT_DATE,
     publisher TEXT NOT NULL,
     creater_id INTEGER NOT NULL,
-    pages INTEGER NOT NULL,
-    action TEXT NOT NULL)"""
+    pages INTEGER NOT NULL)"""
 
-"""CREATE TABLE history (
+"""CREATE TABLE historys (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    date DATE DEFAULT CURRENT_DATE,
+    title TEXT NOT NULL,
+    time DATETIME DEFAULT CURRENT_TIMESTAMP,
     user_id INTEGER NOT NULL,
     book_id INTEGER NOT NULL,
     action TEXT NOT NULL)"""
@@ -76,9 +76,8 @@ def login():
             user = users_db.fetchone()
 
         # Ensure the username and the password are correct 
-        if not check_password_hash(user[2], password):
+        if user == None or not check_password_hash(user[2], password):
             flash("invalid username and/or password")
-            print(user[2])
             return render_template("login.html")
 
         # Remember user has logged in
@@ -172,7 +171,14 @@ def Add_book():
             db = conn.cursor()
             
             # Add book
-            db.execute("INSERT INTO books (title, publisher, pages, creater_id, action) VALUES(?, ?, ?, ?, ?)", (title, publisher, pages, user_id, "ADD",))
+            db.execute("INSERT INTO books (title, publisher, pages, creater_id) VALUES(?, ?, ?, ?)", (title, publisher, pages, user_id,))
+
+            # Get book
+            book_db = db.execute("SELECT id FROM books WHERE title = ? AND publisher = ? AND pages = ? AND creater_id = ?", (title, publisher, pages, user_id,))
+            book = book_db.fetchone()
+
+            # Add history
+            db.execute("INSERT INTO historys (title, user_id, book_id, action) VALUES(?, ?, ?, ?)", (title, user_id, book[0], "ADD",))
 
             conn.commit()
 
@@ -190,16 +196,44 @@ def Add_book():
 @app.route("/remove_book", methods=["GET", "POST"])
 @login_required
 def Remove_book():
+
+    user_id = session["user_id"]
+
+    if request.method == "POST":
+
+        book_id = request.form.get("id")
+
+        if book_id:
+            with sqlite3.connect(database_name) as conn:
+                db = conn.cursor()
+
+                # Remove book
+                db.execute("DELETE FROM books WHERE id = ?", (book_id,))
+
+                # Add history
+                db.execute("INSERT INTO historys (title, user_id, book_id, action) VALUES(?, ?, ?, ?)", (request.form.get("title"), user_id, book_id, "REMOVE",))
+                conn.commit()
+
+        return redirect("/remove_book")
+
+    with sqlite3.connect(database_name) as conn:
+        db = conn.cursor()
+
+        books_db = db.execute("SELECT * FROM books WHERE creater_id = ?", (user_id,))
+        books = books_db.fetchall()
+
+    return render_template("remove_book.html", books = books)
+
+@app.route("/history", methods=["GET"])
+@login_required
+def Get_history():
     user_id = session["user_id"]
 
     with sqlite3.connect(database_name) as conn:
         db = conn.cursor()
 
-        books_db = db.execute("SELECT title FROM books WHERE creater_id = ?", (user_id,))
+        historys_db = db.execute("SELECT * FROM historys WHERE user_id = ?", (user_id,))
+        historys = historys_db.fetchall()
 
-    return render_template("remove_book.html", books = books_db)
 
-@app.route("/history", methods=["GET", "POST"])
-@login_required
-def Get_history():
-    return render_template("history.html")
+    return render_template("history.html", historys = historys)
