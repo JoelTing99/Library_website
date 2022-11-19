@@ -26,7 +26,15 @@ database_name = "FinalProject.db"
     publish_date DATE DEFAULT CURRENT_DATE,
     publisher TEXT NOT NULL,
     creater_id INTEGER NOT NULL,
-    pages INTEGER)"""
+    pages INTEGER NOT NULL,
+    action TEXT NOT NULL)"""
+
+"""CREATE TABLE history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    date DATE DEFAULT CURRENT_DATE,
+    user_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    action TEXT NOT NULL)"""
 
 @app.route("/")
 @login_required
@@ -146,6 +154,8 @@ def register():
 def Add_book():
     if request.method == "POST":
 
+        user_id = session["user_id"]
+
         title = request.form.get("title")
         publisher = request.form.get("publisher")
         pages = request.form.get("pages")
@@ -160,11 +170,15 @@ def Add_book():
 
         with sqlite3.connect(database_name) as conn:
             db = conn.cursor()
+            
+            # Add book
+            db.execute("INSERT INTO books (title, publisher, pages, creater_id, action) VALUES(?, ?, ?, ?, ?)", (title, publisher, pages, user_id, "ADD",))
 
-            db.execute("INSERT INTO books (title, publisher, pages, creater_id) VALUES(?, ?, ?, ?)", (title, publisher, pages, session["user_id"]))
             conn.commit()
 
-            if len(db.execute("SELECT * FROM books WHERE title = ? AND publisher = ?", (title, publisher,)).fetchall()) > 1:
+            book_db = db.execute("SELECT * FROM books WHERE title = ? AND publisher = ?", (title, publisher,))
+            
+            if len(book_db.fetchall()) > 1:
                 flash("this book exists") 
                 return render_template("add_book.html")
 
@@ -176,4 +190,16 @@ def Add_book():
 @app.route("/remove_book", methods=["GET", "POST"])
 @login_required
 def Remove_book():
-    return render_template("remove_book.html")
+    user_id = session["user_id"]
+
+    with sqlite3.connect(database_name) as conn:
+        db = conn.cursor()
+
+        books_db = db.execute("SELECT title FROM books WHERE creater_id = ?", (user_id,))
+
+    return render_template("remove_book.html", books = books_db)
+
+@app.route("/history", methods=["GET", "POST"])
+@login_required
+def Get_history():
+    return render_template("history.html")
