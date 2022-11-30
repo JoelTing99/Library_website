@@ -5,23 +5,27 @@
 {% endblock %}
 
 {% block main %}
-<div class="mb-5">
+<div class="my-5">
     <h1>History</h1>
 </div>
 <div class="mb-3 row justify-content-md-center">
-    <lu class="list-group w-50">
-        <li class="list-group-item list-group-item-light d-flex justify-content-between">
-            <h2 class="mt-1">Title</h2>
-            <h2 class="mt-1">Time</h2>
-            <h2 class="mt-1">Action</h2>
-        </li>
-        {% for history in historys %}
-            <li class="list-group-item list-group-item-dark d-flex justify-content-between">
-                <h2 class="mt-1">{{ history[1] }}</h2>
-                <h4 class="mt-2">{{ history[2] }}</h4>
-                <h4 class="mt-2">{{ history[5] }}</h4>
-            </li>
-        {% endfor %}
-    </lu>
+    <table class="table table-light w-50">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Time</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for history in historys %}
+            <tr>
+                <th>{{ history[1] }}</th>
+                <td>{{ history[2] }}</td>
+                <td>{{ history[5] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

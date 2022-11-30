@@ -22,10 +22,7 @@
                 <div class="collapse navbar-collapse" id="navbar">
                     {% if session["user_id"] %}
                         <ul class="navbar-nav me-auto ps-4 mt-2">
-                            <li class="nav-item"><a class="nav-link" href="#">My Books</a></li>
                             <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/remove_book">Remove Books</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/add_book">Add Books</a></li>
                         </ul>
                         <ul class="navbar-nav ms-auto mt-2">
                             <li class="nav-item"><a class="nav-link" href="/account">Account</a></li>
@@ -49,7 +46,7 @@
             </header>
         {% endif %}
 
-        <main class="container-fluid py-5 text-center">
+        <main class="container-fluid text-center">
             {% block main %}{% endblock %}
         </main>
     </body>

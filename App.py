@@ -3,8 +3,10 @@ import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+from functools import wraps
 
-from helper import login_required
+UPLOAD_FOLDER = "static/uploads/"
 
 # Create the application instance
 app = Flask(__name__)
@@ -15,6 +17,9 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+
+# Set file path
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 Session(app)
 
 database_name = "FinalProject.db"
@@ -26,7 +31,8 @@ database_name = "FinalProject.db"
     publish_date DATE DEFAULT CURRENT_DATE,
     publisher TEXT NOT NULL,
     creater_id INTEGER NOT NULL,
-    pages INTEGER NOT NULL)"""
+    pages INTEGER NOT NULL,
+    file_name TEXT NOT NULL)"""
 
 """CREATE TABLE historys (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -36,15 +42,18 @@ database_name = "FinalProject.db"
     book_id INTEGER NOT NULL,
     action TEXT NOT NULL)"""
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/account/login")
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route("/")
 @login_required
 def index():
     return render_template("index.html")
-
-@app.route("/account")
-@login_required
-def account():
-    return render_template("layout.html")
 
 @app.route("/account/login", methods=["GET", "POST"])
 def login():
@@ -61,13 +70,11 @@ def login():
         # Ensure username and password is not empty
         if not username:
             flash("must provide username")
-            print("must provide username")
-            return render_template("login.html")
+            return redirect(request.url)
 
         elif not password:
             flash("must provide password")
-            print("must provide password")
-            return render_template("login.html")
+            return redirect(request.url)
 
         with sqlite3.connect(database_name) as conn:
             db = conn.cursor()
@@ -113,17 +120,17 @@ def register():
         # Ensure username was submitted
         if not username:
             flash("must provide username")
-            return render_template("register.html")
+            return render_template(request.url)
 
         # Ensure password was submitted
         elif not password:
             flash("must provide password")
-            return render_template("register.html")
+            return render_template(request.url)
 
         # Ensure password was same
         elif password != confirm_password:
             flash("two passwords are not the same")
-            return render_template("register.html")
+            return render_template(request.url)
 
         hash_password = generate_password_hash(password)
 
@@ -148,9 +155,10 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/add_book", methods=["GET", "POST"])
+@app.route("/account/add_book", methods=["GET", "POST"])
 @login_required
 def Add_book():
+    
     if request.method == "POST":
 
         user_id = session["user_id"]
@@ -158,20 +166,39 @@ def Add_book():
         title = request.form.get("title")
         publisher = request.form.get("publisher")
         pages = request.form.get("pages")
-
+        book_pdf = request.files.get("book_pdf")
+        
         if not title:
             flash("must provide title")
-            return render_template("/add_book")
+            return redirect(request.url)
 
         if not publisher:
             flash("must provide publisher")
-            return render_template("/add_book")
+            return redirect(request.url)
+
+        if not pages:
+            flash("must provide pages")
+            return redirect(request.url)
+
+        if book_pdf.filename == "":
+            flash("must provide file")
+            return redirect(request.url)
+
+        book_pdf_name = secure_filename(book_pdf.filename)
+        book_pdf.save(os.path.join(UPLOAD_FOLDER, book_pdf_name))
 
         with sqlite3.connect(database_name) as conn:
             db = conn.cursor()
             
+            # Check exist
+            book_db = db.execute("SELECT * FROM books WHERE title = ? AND publisher = ? AND file_name = ?", (title, publisher, book_pdf_name,))
+            
+            if len(book_db.fetchall()) > 1:
+                flash("this book exists") 
+                return redirect(request.url)
+
             # Add book
-            db.execute("INSERT INTO books (title, publisher, pages, creater_id) VALUES(?, ?, ?, ?)", (title, publisher, pages, user_id,))
+            db.execute("INSERT INTO books (title, publisher, pages, creater_id, file_name) VALUES(?, ?, ?, ?, ?)", (title, publisher, pages, user_id, book_pdf_name,))
 
             # Get book
             book_db = db.execute("SELECT id FROM books WHERE title = ? AND publisher = ? AND pages = ? AND creater_id = ?", (title, publisher, pages, user_id,))
@@ -182,18 +209,12 @@ def Add_book():
 
             conn.commit()
 
-            book_db = db.execute("SELECT * FROM books WHERE title = ? AND publisher = ?", (title, publisher,))
-            
-            if len(book_db.fetchall()) > 1:
-                flash("this book exists") 
-                return render_template("add_book.html")
-
         flash("Book Added")
         return redirect("/")
 
     return render_template("add_book.html") 
 
-@app.route("/remove_book", methods=["GET", "POST"])
+@app.route("/account/remove_book", methods=["GET", "POST"])
 @login_required
 def Remove_book():
 
@@ -214,7 +235,7 @@ def Remove_book():
                 db.execute("INSERT INTO historys (title, user_id, book_id, action) VALUES(?, ?, ?, ?)", (request.form.get("title"), user_id, book_id, "REMOVE",))
                 conn.commit()
 
-        return redirect("/remove_book")
+        return redirect("/account/remove_book")
 
     with sqlite3.connect(database_name) as conn:
         db = conn.cursor()
@@ -223,6 +244,11 @@ def Remove_book():
         books = books_db.fetchall()
 
     return render_template("remove_book.html", books = books)
+
+@app.route("/account/my_book", methods=["GET"])
+@login_required
+def My_book():
+    return render_template("my_book.html", books=None)
 
 @app.route("/history", methods=["GET"])
 @login_required
