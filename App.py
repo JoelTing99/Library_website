@@ -59,6 +59,22 @@ def index():
 @app.route("/search", methods=["GET"])
 @login_required
 def search():
+    with sqlite3.connect(database_name) as conn:
+            db = conn.cursor()
+
+            books = db.execute("SELECT * FROM books WHERE title LIKE ?", ("%" + request.args.get("q") + "%",))
+
+    return render_template("search.html", books=books)
+
+
+@app.route("/test", methods=["GET"])
+@login_required
+def test():
+    with sqlite3.connect(database_name) as conn:
+            db = conn.cursor()
+
+            books = db.execute("SELECT * FROM books WHERE title LIKE ?", ("%" + request.args.get("q") + "%",))
+
     return render_template("index.html")
 
 @app.route("/account/login", methods=["GET", "POST"])

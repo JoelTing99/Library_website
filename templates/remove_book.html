@@ -5,45 +5,48 @@
 {% endblock %}
 
 {% block main %}
-<ul class="nav nav-tabs justify-content-center mx-5">
-    <li class="nav-item">
-        <a class="nav-link" href="/account/my_book">My Books</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active" href="/account/add_book">Add Books</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="/account/remove_book">Remove Books</a>
-    </li>
-</ul>
-<div class="my-5 container">
-    <div class="row">
-        <h1 class="col">My Account</h1>
-    </div>
-</div>  
-<form action="/account/remove_book" method="post">
-    <div class="mb-3 row justify-content-md-center">
-        <h4>Remove Books</h4>
+<div class="text-center">
 
-        <table class="table table-light w-25">
-            <thead>
-                <tr>
-                    <th scope="col">Title</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for book in books %}
-                <tr>
-                    <th class="pt-3">{{ book[1] }}</th>
-                    <input name="id" type="hidden" value="{{ book[0] }}">
-                    <input name="title" type="hidden" value="{{ book[1] }}">
-                    <td><button type="submit" class="btn btn-primary">Remove</button></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-    </div>
-</form>
+    <ul class="nav nav-tabs justify-content-center mx-5">
+        <li class="nav-item">
+            <a class="nav-link" href="/account/my_book">My Books</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/account/add_book">Add Books</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/account/remove_book">Remove Books</a>
+        </li>
+    </ul>
+    <div class="my-5 container">
+        <div class="row">
+            <h1 class="col">My Account</h1>
+        </div>
+    </div>  
+    <form action="/account/remove_book" method="post">
+        <div class="mb-3 row justify-content-md-center">
+            <h4>Remove Books</h4>
+    
+            <table class="table table-light w-25">
+                <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <th class="pt-3">{{ book[1] }}</th>
+                        <input name="id" type="hidden" value="{{ book[0] }}">
+                        <input name="title" type="hidden" value="{{ book[1] }}">
+                        <td><button type="submit" class="btn btn-primary">Remove</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
+    </form>
+</div>
 {% endblock %}

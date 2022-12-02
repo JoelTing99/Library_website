@@ -5,46 +5,49 @@
 {% endblock %}
 
 {% block main %}
-<ul class="nav nav-tabs justify-content-center mx-5">
-    <li class="nav-item">
-        <a class="nav-link" href="/account/my_book">My Books</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="/account/add_book">Add Books</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/account/remove_book">Remove Books</a>
-    </li>
-</ul>
-<div class="my-5 container">
-    <div class="row">
-        <h1 class="col">My Account</h1>
-    </div>
-</div> 
-<form action="/account/add_book" method="post" enctype="multipart/form-data">
-    <div class="row mb-3 justify-content-md-center">
-        <h4>Add Books</h4>
-    </div>
-    <label class="mb-5">
-        <div class="input-group mb-1">
-            <span class="input-group-text justify-content-center">Title</span>
-            <input autocomplete="off" autofocus class="form-control" id="title" name="title" type="text">
+<div class="text-center">
+
+    <ul class="nav nav-tabs justify-content-center mx-5">
+        <li class="nav-item">
+            <a class="nav-link" href="/account/my_book">My Books</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/account/add_book">Add Books</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/account/remove_book">Remove Books</a>
+        </li>
+    </ul>
+    <div class="my-5 container">
+        <div class="row">
+            <h1 class="col">My Account</h1>
         </div>
-        <div class="input-group mb-1">
-            <span class="input-group-text justify-content-center">Publisher</span>
-            <input autocomplete="off" autofocus class="form-control" id="publisher" name="publisher" type="text">
+    </div> 
+    <form action="/account/add_book" method="post" enctype="multipart/form-data">
+        <div class="row mb-3 justify-content-md-center">
+            <h4>Add Books</h4>
         </div>
-        <div class="input-group mb-1">
-            <span class="input-group-text justify-content-center">Pages</span>
-            <input autocomplete="off" autofocus class="form-control" id="pages" name="pages" type="number" min="1">
+        <label class="mb-5">
+            <div class="input-group mb-1">
+                <span class="input-group-text justify-content-center">Title</span>
+                <input autocomplete="off" autofocus class="form-control" id="title" name="title" type="text">
+            </div>
+            <div class="input-group mb-1">
+                <span class="input-group-text justify-content-center">Publisher</span>
+                <input autocomplete="off" autofocus class="form-control" id="publisher" name="publisher" type="text">
+            </div>
+            <div class="input-group mb-1">
+                <span class="input-group-text justify-content-center">Pages</span>
+                <input autocomplete="off" autofocus class="form-control" id="pages" name="pages" type="number" min="1">
+            </div>
+            <div class="input-group mb-1">
+                <input type="file" class="form-control" id="book_pdf" name="book_pdf" accept="application/pdf">
+                <label class="input-group-text justify-content-center" for="book_pdf">Upload</label>
+            </div>
+        </label>
+        <div class="mb-3 d-grid gap-2 col-2 mx-auto">
+            <button type="submit" value="Upload" class="btn btn-primary">Add</button>
         </div>
-        <div class="input-group mb-1">
-            <input type="file" class="form-control" id="book_pdf" name="book_pdf" accept="application/pdf">
-            <label class="input-group-text justify-content-center" for="book_pdf">Upload</label>
-        </div>
-    </label>
-    <div class="mb-3 d-grid gap-2 col-2 mx-auto">
-        <button type="submit" value="Upload" class="btn btn-primary">Add</button>
-    </div>
-</form>
+    </form>
+</div>
 {% endblock %}
