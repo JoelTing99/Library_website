@@ -5,12 +5,59 @@
 {% endblock %}
 
 {% block main %}
-    <form action="#" method="get">
-        <div class="my-5">
+    <form action="/search" method="get">
+        <div class="my-5 text-center">
             <h1>Search</h1>
         </div>
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="search" name="search" placeholder="Search" type="text">
+        <div class="mb-5">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="query" name="q" placeholder="Search" type="search">
         </div>
     </form>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-6 pb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">publisher</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 pb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Title</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 pb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Title</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 pb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Title</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 pb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Title</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 pb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Title</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

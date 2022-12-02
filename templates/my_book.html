@@ -16,30 +16,33 @@
         <a class="nav-link" href="/account/remove_book">Remove Books</a>
     </li>
 </ul>
-<form action="/account" method="post">
-   
-    <div class="my-5 container">
-        <div class="row">
-            <h1 class="col">My Account</h1>
-        </div>
-    </div>   
-    <div class="mb-5 container">
-        <div class="row mb-3 justify-content-md-center">
-            <h4>My Books</h4>
-            
-            <table class="table table-light w-75">
-                <thead>
-                    <tr>
-                        <th scope="col">Title</th>
-                        <th scope="col">Publisher</th>
-                        <th scope="col">Pages</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-        </div>
+<div class="my-5 container">
+    <div class="row">
+        <h1 class="col">My Account</h1>
     </div>
-</form>
+</div>   
+<div class="mb-5 container">
+    <div class="row mb-3 justify-content-md-center">
+        <h4>My Books</h4>
+        
+        <table class="table table-light w-75">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Publisher</th>
+                    <th scope="col">Pages</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                    <tr>
+                        <th class="pt-2"><a href="/static/uploads/{{book[6]}}#toolbar=0" class="link-dark text-decoration-none">{{ book[1] }}</a></th>
+                        <th class="pt-2">{{ book[3] }} </td>
+                        <td class="pt-2">{{ book[5] }} </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

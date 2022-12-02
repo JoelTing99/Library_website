@@ -5,6 +5,7 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
+from uuid import uuid4
 
 UPLOAD_FOLDER = "static/uploads/"
 
@@ -53,6 +54,11 @@ def login_required(f):
 @app.route("/")
 @login_required
 def index():
+    return render_template("index.html")
+
+@app.route("/search", methods=["GET"])
+@login_required
+def search():
     return render_template("index.html")
 
 @app.route("/account/login", methods=["GET", "POST"])
@@ -168,6 +174,8 @@ def Add_book():
         pages = request.form.get("pages")
         book_pdf = request.files.get("book_pdf")
         
+        
+
         if not title:
             flash("must provide title")
             return redirect(request.url)
@@ -180,11 +188,15 @@ def Add_book():
             flash("must provide pages")
             return redirect(request.url)
 
-        if book_pdf.filename == "":
+        if  book_pdf.filename == "":
             flash("must provide file")
             return redirect(request.url)
 
         book_pdf_name = secure_filename(book_pdf.filename)
+
+        if book_pdf_name == "pdf":
+            book_pdf_name = str(uuid4().hex) + ".pdf"
+
         book_pdf.save(os.path.join(UPLOAD_FOLDER, book_pdf_name))
 
         with sqlite3.connect(database_name) as conn:
@@ -248,7 +260,20 @@ def Remove_book():
 @app.route("/account/my_book", methods=["GET"])
 @login_required
 def My_book():
-    return render_template("my_book.html", books=None)
+    user_id = session["user_id"]
+
+    with sqlite3.connect(database_name) as conn:
+        db = conn.cursor()
+
+        books_db = db.execute("SELECT * FROM books WHERE creater_id = ?", (user_id,))
+        books = books_db.fetchall()
+
+    return render_template("my_book.html", books=books)
+
+@app.route("/account", methods=["GET"])
+@login_required
+def account():
+    return redirect("/account/my_book")
 
 @app.route("/history", methods=["GET"])
 @login_required
@@ -258,7 +283,7 @@ def Get_history():
     with sqlite3.connect(database_name) as conn:
         db = conn.cursor()
 
-        historys_db = db.execute("SELECT * FROM historys WHERE user_id = ?", (user_id,))
+        historys_db = db.execute("SELECT * FROM historys WHERE user_id = ? ORDER BY TIME DESC LIMIT 16", (user_id,))
         historys = historys_db.fetchall()
 
 
