@@ -66,17 +66,6 @@ def search():
 
     return render_template("search.html", books=books)
 
-
-@app.route("/test", methods=["GET"])
-@login_required
-def test():
-    with sqlite3.connect(database_name) as conn:
-            db = conn.cursor()
-
-            books = db.execute("SELECT * FROM books WHERE title LIKE ?", ("%" + request.args.get("q") + "%",))
-
-    return render_template("index.html")
-
 @app.route("/account/login", methods=["GET", "POST"])
 def login():
     # Clear any user_id
@@ -255,6 +244,10 @@ def Remove_book():
         if book_id:
             with sqlite3.connect(database_name) as conn:
                 db = conn.cursor()
+
+                book_name = db.execute("SELECT file_name FROM books WHERE id = ?", (book_id,)).fetchone()[0]
+                
+                os.remove(os.path.join(UPLOAD_FOLDER, secure_filename(book_name)))
 
                 # Remove book
                 db.execute("DELETE FROM books WHERE id = ?", (book_id,))

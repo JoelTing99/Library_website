@@ -12,8 +12,18 @@
         <div class="mb-5">
             <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="query" name="q" placeholder="Search" type="search">
         </div>
-        <div class="mb-3 d-grid gap-2 col-2 mx-auto">
-            <button type="submit" class="btn btn-primary">Search</button>
-        </div>
     </form>
+    <div id="result">
+
+    </div>
+    <script>
+        let input = document.querySelector("input");
+        input.addEventListener("input", async function(){
+            let response = await fetch("/search?q=" + input.value);
+            let books = await response.text();
+
+            document.querySelector("#result").innerHTML = books;
+        });
+
+    </script>
 {% endblock %}
