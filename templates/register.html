@@ -22,14 +22,21 @@
                 <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="password" name="password" type="password">
             </div>
         </div>
-        <div class="mb-5 row justify-content-md-center">
+        <div class="mb-1 row justify-content-md-center">
             <label for="password" class="col-sm-1 col-form-label">Confirm Password</label>
-            <div class="col-sm-auto">
+            <div class="col-sm-auto mb-3">
                 <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="confirm_password" name="confirm_password" type="password">
+                
+                <div class="progress">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: 10%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
             </div>
+            <div class="text-danger  mb-3" id="password_warn" hidden>Two passwords are not the same</div>
+
         </div>
         <div class="mb-3 d-grid gap-2 col-2 mx-auto">
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary" id="register_btn" disabled>Register</button>
         </div>
         <div class="mb-3">
             <div class="col-sm-auto">Already have an account?
@@ -38,4 +45,60 @@
         </div>
     </form>
 </div>
+<script>
+    let Password_input = document.querySelector("#password");
+    let Confirm_password_input = document.querySelector("#confirm_password");
+    Password_input.addEventListener("input", function(){
+        check_confirm_password();
+        check_password();
+    });
+    Confirm_password_input.addEventListener("input", check_confirm_password);
+
+    function check_confirm_password(){
+        if (Password_input.value != Confirm_password_input.value){
+            document.querySelector("#register_btn").setAttribute("disabled", "disabled");
+            document.querySelector("#password_warn").removeAttribute("hidden");
+        }
+        else{
+            document.querySelector("#register_btn").removeAttribute("disabled");
+            document.querySelector("#password_warn").setAttribute("hidden", "hidden");
+        }
+    }
+    
+    function check_password(){
+        var bar = document.querySelector(".progress-bar");
+        var level = 0;
+        var password_value = Password_input.value;
+        bar.classList.remove("w-25", "w-50", "w-75", "w-100", "bg-danger", "bg-warning", "bg-info","bg-success")
+        
+        if (password_value != ""){
+            if (password_value.length <= 6) {
+                level = 1;
+            }
+            else
+            {
+                if ((password_value.match(/[a-z]/) || password_value.match(/\d+/) || password_value.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/))) level = 2;
+                if (((password_value.match(/[a-z]/) && password_value.match(/\d+/)) || (password_value.match(/\d+/) && password_value.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/)) || (password_value.match(/[a-z]/) && password_value.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/)))) level = 3;
+                if (password_value.match(/[a-z]/) && password_value.match(/\d+/) && password_value.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/)) level = 4
+            }
+            switch(level)
+            {
+                case 1:
+                    bar.classList.add("w-25", "bg-danger");
+                    break;
+                case 2:
+                    bar.classList.add("w-50", "bg-warning");
+                    break;
+                case 3:
+                    bar.classList.add("w-75", "bg-info");
+                    break;
+                case 4:
+                    bar.classList.add("w-100", "bg-success");
+                    break;
+                default:
+                    bar.classList.add("w-25", "bg-danger");
+            }
+        }  
+    }
+</script>
 {% endblock %}

@@ -131,17 +131,17 @@ def register():
         # Ensure username was submitted
         if not username:
             flash("must provide username")
-            return render_template(request.url)
+            return redirect(request.url)
 
         # Ensure password was submitted
         elif not password:
             flash("must provide password")
-            return render_template(request.url)
+            return redirect(request.url)
 
         # Ensure password was same
         elif password != confirm_password:
             flash("two passwords are not the same")
-            return render_template(request.url)
+            return redirect(request.url)
 
         hash_password = generate_password_hash(password)
 
