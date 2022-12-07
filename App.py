@@ -282,7 +282,57 @@ def My_book():
 @app.route("/account", methods=["GET"])
 @login_required
 def account():
-    return redirect("/account/my_book")
+    return render_template("account.html")
+
+@app.route("/change_username", methods=["POST"])
+@login_required
+def change_username():
+    user_id = session["user_id"]
+
+    new_username = request.form.get("username")
+    # Ensure username was submitted
+    if not new_username:
+        flash("must provide username")
+        return redirect(request.url)
+
+    with sqlite3.connect(database_name) as conn:
+        db = conn.cursor()
+
+        if len(db.execute("SELECT * FROM users WHERE username = ?", (new_username,)).fetchall()) != 0:
+                flash("username already exists")
+                return redirect(request.url)
+
+        db.execute("UPDATE users SET username = ? WHERE id = ?", (new_username, user_id,))
+        conn.commit()
+
+    flash("username changed")
+    return redirect("/account")
+
+@app.route("/change_password", methods=["POST"])
+@login_required
+def change_password():
+    user_id = session["user_id"]
+
+    new_password = request.form.get("password")
+    confirm_password = request.form.get("confirm_password")
+
+    # Ensure password was submitted
+    if not new_password:
+        flash("must provide password")
+        return redirect(request.url)
+
+    # Ensure password was same
+    elif new_password != confirm_password:
+        flash("two passwords are not the same")
+        return redirect(request.url)
+
+    with sqlite3.connect(database_name) as conn:
+        db = conn.cursor()
+
+        db.execute("UPDATE users SET hash = ? WHERE id = ?", (generate_password_hash(new_password), user_id,))
+        conn.commit()
+    flash("password changed")
+    return redirect("/account")
 
 @app.route("/history", methods=["GET"])
 @login_required

@@ -1,28 +1,27 @@
-{% extends "layout.html" %}
+{% extends "account.html" %}
 
 {% block title %}
     My Books
 {% endblock %}
 
-{% block main %}
-<div class="text-center">
-
-    <ul class="nav nav-tabs justify-content-center mx-5">
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/account/my_book">My Books</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/account/add_book">Add Books</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/account/remove_book">Remove Books</a>
-        </li>
-    </ul>
-    <div class="my-5 container">
-        <div class="row">
-            <h1 class="col">My Account</h1>
-        </div>
-    </div>   
+{% block nav %}
+<ul class="nav nav-tabs justify-content-center mx-5">
+    <li class="nav-item">
+        <a class="nav-link" aria-current="page" href="/account">Account</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/account/my_book">My Books</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/account/add_book">Add Books</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/account/remove_book">Remove Books</a>
+    </li>
+</ul>
+{% endblock %}
+{% block contain %}
+<div class="text-center">  
     <div class="mb-5 container">
         <div class="row mb-3 justify-content-md-center">
             <h4>My Books</h4>

@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Account
+{% endblock %}
+
+{% block main %}
+<div class="text-center">
+    {% block nav %}
+    <ul class="nav nav-tabs justify-content-center mx-5">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/account">Account</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="/account/my_book">My Books</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/account/add_book">Add Books</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/account/remove_book">Remove Books</a>
+        </li>
+    </ul>
+    {% endblock %}
+    <div class="my-5 container">
+        <div class="row">
+            <h1 class="col">My Account</h1>
+        </div>
+    </div>   
+    {% block contain %}
+    <div class="row mb-3 justify-content-md-center">
+        <h4>Edit Account</h4>
+    </div>
+    <div class="container">
+        <div class="d-flex">
+            <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <button class="nav-link active" id="v-pills-account-tab" data-bs-toggle="pill" data-bs-target="#v-pills-account" type="button" role="tab" aria-controls="v-pills-account" aria-selected="true">Change Username</button>
+                <button class="nav-link" id="v-pills-password-tab" data-bs-toggle="pill" data-bs-target="#v-pills-password" type="button" role="tab" aria-controls="v-pills-password" aria-selected="false">Change Password</button>
+            </div>
+        </div>
+        <div class="justify-content-center">
+            <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade show active" id="v-pills-account" role="tabpanel" aria-labelledby="v-pills-account-tab" tabindex="0">
+                        <form action="/change_username" method="post">
+                            <div class="mb-5 row justify-content-md-center">
+                                <label for="username" class="col-sm-auto col-form-label">New Username</label>
+                                <div class="col-sm-auto">
+                                    <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 d-grid col-1 mx-auto">
+                                <button type="submit" class="btn btn-primary" id="register_btn">Change</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-password" role="tabpanel" aria-labelledby="v-pills-password-tab" tabindex="0">
+                        <form action="/change_password" method="post">
+                            <div class="mb-3 row justify-content-md-center">
+                                <label for="password" class="col-sm-auto col-form-label">New Password</label>
+                                <div class="col-sm-auto">
+                                    <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="password" name="password" type="password">
+                                </div>
+                            </div>
+                            <div class="mb-1 row justify-content-md-center">
+                                <label for="password" class="col-sm-auto col-form-label">Confirm Password</label>
+                                <div class="col-sm-auto mb-3 me-4">
+                                    <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="confirm_password" name="confirm_password" type="password">
+                                </div>
+                                <div class="text-danger mb-3" id="password_warn" hidden>Two passwords are not the same</div>
+                            </div>
+                            <div class="mb-3 d-grid col-1 mx-auto">
+                                <button type="submit" class="btn btn-primary" id="change_password">Change</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+</div>
+<script>
+    let Password_input = document.querySelector("#password");
+    let Confirm_password_input = document.querySelector("#confirm_password");
+    Password_input.addEventListener("input", check_confirm_password);
+    Confirm_password_input.addEventListener("input", check_confirm_password);
+
+    function check_confirm_password(){
+        if (Password_input.value != Confirm_password_input.value){
+            document.querySelector("#change_password").setAttribute("disabled", "disabled");
+            document.querySelector("#password_warn").removeAttribute("hidden");
+        }
+        else{
+            document.querySelector("#change_password").removeAttribute("disabled");
+            document.querySelector("#password_warn").setAttribute("hidden", "hidden");
+        }
+    }
+</script>
+{% endblock %}
