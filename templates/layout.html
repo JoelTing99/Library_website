@@ -10,12 +10,12 @@
 
         <link href="/static/styles.css" rel="stylesheet">
 
-        <title>Library: {% block title %}{% endblock %}</title>
+        <title>Online Library: {% block title %}{% endblock %}</title>
     </head>
     <body>
         <nav class="bg-light border navbar navbar-expand-md navbar-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">Library</a>
+                <a class="navbar-brand" href="/">Online Library</a>
                 <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -37,16 +37,19 @@
                 </div>
             </div>
         </nav>
-
+        
         {% if get_flashed_messages() %}
-            <header>
+            <div class="justify-content-md-center">
                 {% for message in get_flashed_messages() %}
-                    <div class="alert alert-primary mb-0 text-center">{{ message }}</div>
+                    <div class="alert alert-warning alert-dismissible fade show text-center col-sm-auto" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 {% endfor %}
-            </header>
+            </div>
         {% endif %}
-
         <main class="container-fluid">
+
             {% block main %}{% endblock %}
         </main>
     </body>
