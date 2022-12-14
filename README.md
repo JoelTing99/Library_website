@@ -6,7 +6,5 @@ This is a **online library** app let everyone have a platform to upload their bo
 
 This app is made with **Flask** and **Python** for the back-end, the **Bootstrap** for the front-end and the **SQLite** for the database. Without using any API, all date must upload from the user.
 
-
-
 #### Made by: 
 **Joel Ting, 19, Malaysia**
